@@ -91,9 +91,15 @@ where
             let variant = variant.to_string();
             let variant = if cfg!(feature = "field-snake-case") {
                 variant.to_snake_case()
+            } else if cfg!(feature = "offset-pagination") {
+                variant
+                    .chars()
+                    .filter(|c| c.is_alphanumeric())
+                    .collect::<String>()
             } else {
                 variant.to_upper_camel_case().to_ascii_uppercase()
             };
+
             variant.eq(input)
         });
         variant.unwrap().to_string()
@@ -141,7 +147,7 @@ where
         condition
     };
 
-    let condition = match filter.get("is_in") {
+    let condition = match filter.get("in") {
         Some(data) => {
             let data: Vec<_> = data
                 .list()
